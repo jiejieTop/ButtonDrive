@@ -18,9 +18,13 @@ Button_drive是一个小巧的按键驱动，支持单击、双击、长按、�
 
 ![双击](https://github.com/jiejieTop/ButtonDrive/blob/master/png/2.png?raw=true)
 
-3. **连击**
+3. **连按**
 
-![连击](https://github.com/jiejieTop/ButtonDrive/blob/master/png/3.png?raw=true)
+![连按](https://github.com/jiejieTop/ButtonDrive/blob/master/png/3.png?raw=true)
+
+4. **连按释放**
+
+![连按释放](https://github.com/jiejieTop/ButtonDrive/blob/master/png/4.png?raw=true)
 
 ## 使用方法
 1. 创建按键句柄
