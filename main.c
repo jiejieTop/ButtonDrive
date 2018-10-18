@@ -19,22 +19,9 @@ Button_t Button2;
   
 static void BSP_Init(void);
 
-
-uint8_t Read_KEY1_Level(void)
-{
-  return GPIO_ReadInputDataBit(KEY1_GPIO_PORT,KEY1_GPIO_PIN);
-}
-
-uint8_t Read_KEY2_Level(void)
-{
-  return GPIO_ReadInputDataBit(KEY2_GPIO_PORT,KEY2_GPIO_PIN);
-}
-
-
-
 void Btn1_Dowm_CallBack(void *btn)
 {
-  PRINT_INFO("Button1 连击!");
+  PRINT_INFO("Button1 单击!");
 }
 
 void Btn1_Double_CallBack(void *btn)
@@ -45,15 +32,21 @@ void Btn1_Double_CallBack(void *btn)
 void Btn1_Long_CallBack(void *btn)
 {
   PRINT_INFO("Button1 长按!");
-  
-  Button_Delete(&Button2);
-  PRINT_INFO("删除Button1");
-  Search_Button();
 }
+
+void Btn1_Continuos_CallBack(void *btn)
+{
+  PRINT_INFO("Button1 连按!");
+}
+void Btn1_ContinuosFree_CallBack(void *btn)
+{
+  PRINT_INFO("Button1 连按释放!");
+}
+
 
 void Btn2_Dowm_CallBack(void *btn)
 {
-  PRINT_INFO("Button2 连击!");
+  PRINT_INFO("Button2 单击!");
 }
 
 void Btn2_Double_CallBack(void *btn)
@@ -66,6 +59,14 @@ void Btn2_Long_CallBack(void *btn)
   PRINT_INFO("Button2 长按!");
 }
 
+void Btn2_Continuos_CallBack(void *btn)
+{
+  PRINT_INFO("Button2 连按!");
+}
+void Btn2_ContinuosFree_CallBack(void *btn)
+{
+  PRINT_INFO("Button2 连按释放!");
+}
 
 /**
   ******************************************************************
@@ -81,24 +82,30 @@ int main(void)
   
 	BSP_Init();
   
-//  PRINT_DEBUG("当前电平：%d",Key_Scan(KEY1_GPIO_PORT,KEY1_GPIO_PIN));
-  
   Button_Create("Button1",
-                &Button1, 
-                Read_KEY1_Level, 
-                KEY_ON);
-  Button_Attach(&Button1,BUTTON_DOWM,Btn1_Dowm_CallBack);
-//  Button_Attach(&Button1,BUTTON_DOUBLE,Btn1_Double_CallBack);
-  Button_Attach(&Button1,BUTTON_LONG,Btn1_Long_CallBack);
-  
+              &Button1, 
+              Read_KEY1_Level, 
+              KEY_ON);
+  Button_Attach(&Button1,BUTTON_DOWM,Btn1_Dowm_CallBack);                       //单击
+  Button_Attach(&Button1,BUTTON_DOUBLE,Btn1_Double_CallBack);                   //双击
+  Button_Attach(&Button1,BUTTON_CONTINUOS,Btn1_Continuos_CallBack);             //连按  
+  Button_Attach(&Button1,BUTTON_CONTINUOS_FREE,Btn1_ContinuosFree_CallBack);    //连按释放  
+  Button_Attach(&Button1,BUTTON_LONG,Btn1_Long_CallBack);                       //长按
+
+
   Button_Create("Button2",
-                &Button2, 
-                Read_KEY2_Level, 
-                KEY_ON);
-  Button_Attach(&Button2,BUTTON_DOWM,Btn2_Dowm_CallBack);
-//  Button_Attach(&Button2,BUTTON_DOUBLE,Btn2_Double_CallBack);
-  Button_Attach(&Button2,BUTTON_LONG,Btn2_Long_CallBack);
- 
+              &Button2, 
+              Read_KEY2_Level, 
+              KEY_ON);
+  Button_Attach(&Button2,BUTTON_DOWM,Btn2_Dowm_CallBack);                     //单击
+  Button_Attach(&Button2,BUTTON_DOUBLE,Btn2_Double_CallBack);                 //双击
+  Button_Attach(&Button2,BUTTON_CONTINUOS,Btn2_Continuos_CallBack);           //连按
+  Button_Attach(&Button2,BUTTON_CONTINUOS_FREE,Btn2_ContinuosFree_CallBack);  //连按释放
+  Button_Attach(&Button2,BUTTON_LONG,Btn2_Long_CallBack);                     //长按
+
+  Get_Button_Event(&Button1);
+  Get_Button_Event(&Button2);
+
 	while(1)                            
 	{
 

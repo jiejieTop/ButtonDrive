@@ -20,7 +20,7 @@ static struct button* Head_Button = NULL;
 /*******************************************************************
  *                         函数声明     
  *******************************************************************/
-static char *StrnCopy(char *dst, const char *src, ubase_t n);
+static char *StrnCopy(char *dst, const char *src, uint32_t n);
 static void Print_Btn_Info(Button_t* btn);
 static void Add_Button(Button_t* btn);
 
@@ -136,9 +136,16 @@ void Button_Delete(Button_t *btn)
   * @date    2018-xx-xx
   * @version v1.0
   ***********************************************************/
-uint8_t Get_Button_Event(Button_t *btn)
+void Get_Button_Event(Button_t *btn)
 {
-  return (uint8_t)(btn->Button_Trigger_Event);
+  //按键事件触发的回调函数，用于处理按键事件
+  for(uint8_t i = 0 ; i < number_of_event-1 ; i++)
+  {
+    if(btn->CallBack_Function[i] != 0)
+    {
+      PRINT_INFO("Button_Event:%d",i);
+    }      
+  } 
 }
 
 /************************************************************
@@ -169,18 +176,15 @@ void Button_Cycle_Process(Button_t *btn)
 {
   uint8_t current_level = (uint8_t)btn->Read_Button_Level();//获取当前按键电平
   
-//  PRINT_DEBUG("1:btn->Button_State = %d",btn->Button_State);
-  
   if((current_level != btn->Button_Last_Level)&&(++(btn->Debounce_Time) >= BUTTON_DEBOUNCE_TIME)) //按键电平发生变化，消抖
   {
       btn->Button_Last_Level = current_level; //更新当前按键电平
       btn->Debounce_Time = 0;                 //确定了是按下
       
-      //如果按键是没被按下的，改变按键状态为按下(首次按下)
-      if(btn->Button_State == NONE_TRIGGER)
+      //如果按键是没被按下的，改变按键状态为按下(首次按下/双击按下)
+      if((btn->Button_State == NONE_TRIGGER)||(btn->Button_State == BUTTON_DOUBLE))
       {
-          btn->Button_State = BUTTON_DOWM;
-          PRINT_DEBUG("首次按下");
+        btn->Button_State = BUTTON_DOWM;
       }
       //释放按键
       else if(btn->Button_State == BUTTON_DOWM)
@@ -192,42 +196,45 @@ void Button_Cycle_Process(Button_t *btn)
   
   switch(btn->Button_State)
   {
-    case BUTTON_DOWM :
+    case BUTTON_DOWM :            // 按下状态
     {
       if(btn->Button_Last_Level == btn->Button_Trigger_Level) //按键按下
       {
-        btn->Button_Trigger_Event = BUTTON_DOWM;
-        
         #if CONTINUOS_TRIGGER     //支持连续触发
+        
         if(++(btn->Button_Cycle) >= BUTTON_CYCLE)
         {
           btn->Button_Cycle = 0;
-          TRIGGER_CB(BUTTON_DOWM);    //连按
+          btn->Button_Trigger_Event = BUTTON_CONTINUOS; 
+          TRIGGER_CB(BUTTON_CONTINUOS);    //连按
           PRINT_DEBUG("连按");
         }
+ 
+        #else
+        
+          btn->Button_Trigger_Event = BUTTON_DOWM;
+        
+          if(++(btn->Long_Time) >= BUTTON_LONG_TIME)  //释放按键前更新触发事件为长按
+          {
+            btn->Button_Trigger_Event = BUTTON_LONG; 
+            PRINT_DEBUG("长按");
+          }
+        
         #endif
-        
-        if(++(btn->Long_Time) >= BUTTON_LONG_TIME)  //释放按键前更新触发事件为长按
-        {
-          btn->Button_Trigger_Event = BUTTON_LONG; 
-          PRINT_DEBUG("长按");
-        }
-        
+       
       }
-      else    //如果是不支持连按的，检测释放按键
-      {
-        btn->Button_State = BUTTON_UP;
-      }
-
+//      else    //检测释放按键
+//      {
+//        btn->Button_State = BUTTON_UP;
+//      }
       break;
     } 
     
-    case BUTTON_UP :
+    case BUTTON_UP :        // 弹起状态
     {
-      if(btn->Button_Trigger_Event == BUTTON_DOWM)  //按下单击
+      if(btn->Button_Trigger_Event == BUTTON_DOWM)  //触发单击
       {
-        // 双击
-        if((btn->Timer_Count <= BUTTON_DOUBLE_TIME)&&(btn->Button_Last_State == BUTTON_DOWM))
+        if((btn->Timer_Count <= BUTTON_DOUBLE_TIME)&&(btn->Button_Last_State == BUTTON_DOUBLE)) // 双击
         {
           TRIGGER_CB(BUTTON_DOUBLE);    
           PRINT_DEBUG("双击");
@@ -236,11 +243,15 @@ void Button_Cycle_Process(Button_t *btn)
         }
         else
         {
-          btn->Timer_Count=0;
-          btn->Long_Time = 0;   //检测长按失败，清0
-          TRIGGER_CB(BUTTON_DOWM);    //单击
-          btn->Button_State = NONE_TRIGGER;
-          btn->Button_Last_State = BUTTON_DOWM;
+            btn->Timer_Count=0;
+            btn->Long_Time = 0;   //检测长按失败，清0
+          
+          #if (SINGLE_AND_DOUBLE_TRIGGER == 0)
+            TRIGGER_CB(BUTTON_DOWM);    //单击
+          #endif
+            btn->Button_State = BUTTON_DOUBLE;
+            btn->Button_Last_State = BUTTON_DOUBLE;
+          
         }
       }
       
@@ -251,14 +262,45 @@ void Button_Cycle_Process(Button_t *btn)
         btn->Button_State = NONE_TRIGGER;
         btn->Button_Last_State = BUTTON_LONG;
       } 
+      
+      #if CONTINUOS_TRIGGER
+        else if(btn->Button_Trigger_Event == BUTTON_CONTINUOS)  //连按
+        {
+          btn->Long_Time = 0;
+          TRIGGER_CB(BUTTON_CONTINUOS_FREE);    //连发释放
+          btn->Button_State = NONE_TRIGGER;
+          btn->Button_Last_State = BUTTON_CONTINUOS;
+        } 
+      #endif
+      
+      break;
+    }
+    
+    case BUTTON_DOUBLE :
+    {
+      btn->Timer_Count++;     //时间记录 
+      if(btn->Timer_Count>=BUTTON_DOUBLE_TIME)
+      {
+        btn->Button_State = NONE_TRIGGER;
+        btn->Button_Last_State = NONE_TRIGGER;
+      }
+      #if SINGLE_AND_DOUBLE_TRIGGER
+      
+        if((btn->Timer_Count>=BUTTON_DOUBLE_TIME)&&(btn->Button_Last_State != BUTTON_DOWM))
+        {
+          btn->Timer_Count=0;
+          TRIGGER_CB(BUTTON_DOWM);    //单击
+          btn->Button_State = NONE_TRIGGER;
+          btn->Button_Last_State = BUTTON_DOWM;
+        }
+        
+      #endif
+
       break;
     }
     
     case NONE_TRIGGER :
-    {
-      btn->Timer_Count++;     //时间记录
       break;
-    }
     
     default :
       break;
@@ -317,7 +359,7 @@ void Search_Button(void)
   * @version v1.0
   * @note    NULL
   ***********************************************************/
-static char *StrnCopy(char *dst, const char *src, ubase_t n)
+static char *StrnCopy(char *dst, const char *src, uint32_t n)
 {
   if (n != 0)
   {
@@ -327,7 +369,6 @@ static char *StrnCopy(char *dst, const char *src, ubase_t n)
     {
         if ((*d++ = *s++) == 0)
         {
-            /* NUL pad the remaining n-1 bytes */
             while (--n != 0)
                 *d++ = 0;
             break;
