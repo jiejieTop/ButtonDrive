@@ -17,11 +17,15 @@
    因为双击必须是有一次按下并且释放之后才产生的 */
 #define SINGLE_AND_DOUBLE_TRIGGER     1 
 
+/* 是否支持长按释放才触发，如果打开这个宏定义，那么长按释放之后才触发单次长按，
+   否则在长按指定时间就一直触发长按，触发周期由 BUTTON_LONG_CYCLE 决定 */
+#define LONG_FREE_TRIGGER             0 
 
-#define BUTTON_DEBOUNCE_TIME 	2   //消抖时间      2*调用周期
-#define BUTTON_CYCLE          2	 //连按触发时间  2*调用周期  
-#define BUTTON_DOUBLE_TIME    15 	//双击间隔时间  20*调用周期  建议在200-600ms
-#define BUTTON_LONG_TIME 	    50		/* 持续1秒(50*调用周期)，认为长按事件 */
+#define BUTTON_DEBOUNCE_TIME 	  2   //消抖时间      (n-1)*调用周期
+#define BUTTON_CONTINUOS_CYCLE  1	  //连按触发周期时间  (n-1)*调用周期  
+#define BUTTON_LONG_CYCLE       1	  //长按触发周期时间  (n-1)*调用周期 
+#define BUTTON_DOUBLE_TIME      15 	//双击间隔时间  (n-1)*调用周期  建议在200-600ms
+#define BUTTON_LONG_TIME 	      50		/* 持续n秒((n-1)*调用周期 ms)，认为长按事件 */
 
 #define TRIGGER_CB(event)   \
         if(btn->CallBack_Function[event]) \
@@ -36,6 +40,7 @@ typedef enum {
   BUTTON_UP,
   BUTTON_DOUBLE,
   BUTTON_LONG,
+  BUTTON_LONG_FREE,
   BUTTON_CONTINUOS,
   BUTTON_CONTINUOS_FREE,
   BUTTON_ALL_RIGGER,
@@ -78,27 +83,7 @@ typedef struct button
 
 
 /* 供外部调用的函数声明 */
-/************************************************************
-  * @note    example
-uint8_t Read_TestBtn_Level(void)
-{
-  return GPIO_ReadInputDataBit(KEY1_GPIO_PORT,KEY1_GPIO_PIN);
-}
 
-void TestBtn_CallBack(void)
-{
-  printf("按键按下!\n");
-}
-
-  Button_Create("test_button",
-            &test_button, 
-            Read_TestBtn_Level, 
-            KEY_ON);
-  Button_Attach(&test_button,BUTTON_DOWM,TestBtn_CallBack);
-  Button_Attach(&test_button,BUTTON_LONG,TestBtn1_CallBack);
-  ......
-  
-  ***********************************************************/
 void Button_Create(const char *name,
                   Button_t *btn, 
                   uint8_t(*read_btn_level)(void),
@@ -114,9 +99,9 @@ void Button_Delete(Button_t *btn);
   
 void Search_Button(void);     
                   
-void Get_Button_Event(Button_t *btn);
-
+void Get_Button_EventInfo(Button_t *btn);
+uint8_t Get_Button_Event(Button_t *btn);
 uint8_t Get_Button_State(Button_t *btn);
-
+void Button_Process_CallBack(void *btn);
                   
 #endif
