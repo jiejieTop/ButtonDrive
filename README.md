@@ -120,13 +120,12 @@ typedef struct button
   uint8_t Button_Trigger_Event;     /* 按键触发事件，单击，双击，长按等 */
   
   Button_CallBack CallBack_Function[number_of_event];
-  
-	uint8_t Button_Cycle;	           /* 连续按键周期 */
+  uint8_t Button_Cycle;	           /* 连续按键周期 */
   
   uint8_t Timer_Count;			/* 计时 */
-	uint8_t Debounce_Time;		/* 消抖时间 */
+  uint8_t Debounce_Time;		/* 消抖时间 */
   
-	uint8_t Long_Time;		  /* 按键按下持续时间 */
+  uint8_t Long_Time;		  /* 按键按下持续时间 */
   
   struct button *Next;
   
@@ -150,6 +149,12 @@ typedef enum {
 ```
 #####  宏定义选择
 ```
+#define BTN_NAME_MAX  32     //名字最大为32字节
+
+/* 按键消抖时间40ms, 建议调用周期为20ms
+ 只有连续检测到40ms状态不变才认为有效，包括弹起和按下两种事件
+*/
+
 #define CONTINUOS_TRIGGER             0  //是否支持连续触发，连发的话就不要检测单双击与长按了	
 
 /* 是否支持单击&双击同时存在触发，如果选择开启宏定义的话，单双击都回调，只不过单击会延迟响应，
@@ -158,11 +163,19 @@ typedef enum {
    因为双击必须是有一次按下并且释放之后才产生的 */
 #define SINGLE_AND_DOUBLE_TRIGGER     1 
 
+/* 是否支持长按释放才触发，如果打开这个宏定义，那么长按释放之后才触发单次长按，
+   否则在长按指定时间就一直触发长按，触发周期由 BUTTON_LONG_CYCLE 决定 */
+#define LONG_FREE_TRIGGER             0 
 
-#define BUTTON_DEBOUNCE_TIME 	2   //消抖时间      2*调用周期
-#define BUTTON_CYCLE          2	 //连按触发时间  2*调用周期  
-#define BUTTON_DOUBLE_TIME    15 	//双击间隔时间  20*调用周期  建议在200-600ms
-#define BUTTON_LONG_TIME 	    50		/* 持续1秒(50*调用周期)，认为长按事件 */
+#define BUTTON_DEBOUNCE_TIME 	  2   //消抖时间      (n-1)*调用周期
+#define BUTTON_CONTINUOS_CYCLE  1	  //连按触发周期时间  (n-1)*调用周期  
+#define BUTTON_LONG_CYCLE       1	  //长按触发周期时间  (n-1)*调用周期 
+#define BUTTON_DOUBLE_TIME      15 	//双击间隔时间  (n-1)*调用周期  建议在200-600ms
+#define BUTTON_LONG_TIME 	      50		/* 持续n秒((n-1)*调用周期 ms)，认为长按事件 */
+
+#define TRIGGER_CB(event)   \
+        if(btn->CallBack_Function[event]) \
+          btn->CallBack_Function[event]((Button_t*)btn)
 ```
 
 ##### 例子
