@@ -22,13 +22,13 @@ DEPENDS = ["PKG_USING_BUTTON"]
 #---------------------------------------------------------------------------------
 # Compile the configuration 
 #---------------------------------------------------------------------------------
-SOURCES          = ["ButtonDrive/button.c"] 
+SOURCES          = ["button.c"] 
 
 CPPPATH          = [] 
 CCFLAGS          = " -std=gnu99" # no pass
 ASFLAGS          = ""
 
-LOCAL_CPPPATH    = ["./ButtonDrive"] 
+LOCAL_CPPPATH    = [""] 
 LOCAL_CCFLAGS    = " -std=gnu99" 
 LOCAL_ASFLAGS    = ""
 
@@ -36,7 +36,7 @@ CPPDEFINES       = ["CPPDEFINES"]
 LOCAL_CPPDEFINES = ["LOCAL_CPPDEFINES"]
 
 LIBS             = ["libmm"] # keil libmm, gcc mm
-LIBPATH          = [os.path.join(GetCurrentDir(), "ButtonDrive")] 
+LIBPATH          = [os.path.join(GetCurrentDir(), "")] 
 
 LINKFLAGS        = "" 
 
