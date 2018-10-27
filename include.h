@@ -2,7 +2,7 @@
 #define __INCLUDE_H
 
 /* stm32必要文件 */
-#include "stm32f10x.h"
+
 #include "core_cm3.h"
 #include "misc.h"
 
