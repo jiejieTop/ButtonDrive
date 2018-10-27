@@ -86,7 +86,7 @@ void Button_Attach(Button_t *btn,Button_Event btn_event,Button_CallBack btn_call
   if( btn == NULL)
   {
     PRINT_ERR("struct button is null!");
-    ASSERT(ASSERT_ERR);       //╤оят
+    //ASSERT(ASSERT_ERR);       //╤оят
   }
   
   if(BUTTON_ALL_RIGGER == btn_event)

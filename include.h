@@ -7,7 +7,7 @@
 //#include <stdint.h>
 
 /* 重定义头文件 */
-//#include "redef.h"
+#include "redef.h"
 
 /* debug头文件 */
 #include "debug.h"

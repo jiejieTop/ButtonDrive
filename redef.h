@@ -122,6 +122,8 @@ typedef unsigned long       ubase_t;     /**< Nbit unsigned CPU related data typ
 /************************************************************ 
   * @note    下面是记录ERR返回值的宏
   ***********************************************************/
+#define NULL          ( 0 )
+
 #define ERR_OK        ( 0 )
 #define ERR_NOK       ( -1 )
 #define ERR_NULL      ( -2 )
