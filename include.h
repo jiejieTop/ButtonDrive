@@ -1,11 +1,6 @@
 #ifndef __INCLUDE_H
 #define __INCLUDE_H
 
-/* stm32必要文件 */
-
-#include "core_cm3.h"
-#include "misc.h"
-
 /* c 标准库 */
 #include <stdio.h>
 #include <string.h>
