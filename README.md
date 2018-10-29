@@ -209,6 +209,38 @@ typedef enum {
 ## 后续
 [流光](https://github.com/liu2guang)大佬的要求，让我玩一玩RTT的[rtkpgs](https://github.com/liu2guang/buildpkg)，打算用Button_drive练一练手吧。
 
+## ButtonDrive在env使用
+目前我已将按键驱动做成软件包（packages），如果使用RT-Thread操作系统的话，可以在env中直接配置使用!
+
+步骤如下：
+
+1. **选择在线软件包**
+
+![](https://github.com/jiejieTop/ButtonDrive/blob/master/png/5.png?raw=true)
+
+2. **选择软件包属性为外设相关**
+
+![](https://github.com/jiejieTop/ButtonDrive/blob/master/png/6.png?raw=true)
+
+3. **选择button_drive**
+
+![](https://github.com/jiejieTop/ButtonDrive/blob/master/png/7.png?raw=true)
+
+4. **进入驱动的选项配置（自带默认属性）**
+
+![](https://github.com/jiejieTop/ButtonDrive/blob/master/png/8.png?raw=true)
+
+5. **如果不懂按键的配置是什么意思，按下“shift+？”，即可有解释**
+
+![](https://github.com/jiejieTop/ButtonDrive/blob/master/png/9.png?raw=true)
+
+6. **编译生成mdk/iar工程**
+
+![](https://github.com/jiejieTop/ButtonDrive/blob/master/png/10.png?raw=true)
+
+![](https://github.com/jiejieTop/ButtonDrive/blob/master/png/11.png?raw=true)
+
+
 ## 关于[rtkpgs](https://github.com/liu2guang/buildpkg)
 
 ## 简介 ([English](/readme.en.md)) 
