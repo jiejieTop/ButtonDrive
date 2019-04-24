@@ -1,5 +1,5 @@
 /************************************************************
-  * @brief   °´¼üÇı¶¯
+  * @brief   æŒ‰é”®é©±åŠ¨
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -11,14 +11,14 @@
 #include "button.h"
 
 /*******************************************************************
- *                          ±äÁ¿ÉùÃ÷                               
+ *                          å˜é‡å£°æ˜                               
  *******************************************************************/
 
 static struct button* Head_Button = NULL;
 
 
 /*******************************************************************
- *                         º¯ÊıÉùÃ÷     
+ *                         å‡½æ•°å£°æ˜     
  *******************************************************************/
 static char *StrnCopy(char *dst, const char *src, uint32_t n);
 static void Print_Btn_Info(Button_t* btn);
@@ -26,11 +26,11 @@ static void Add_Button(Button_t* btn);
 
 
 /************************************************************
-  * @brief   °´¼ü´´½¨
-	* @param   name : °´¼üÃû³Æ
-	* @param   btn : °´¼ü½á¹¹Ìå
-  * @param   read_btn_level : °´¼üµçÆ½¶ÁÈ¡º¯Êı£¬ĞèÒªÓÃ»§×Ô¼ºÊµÏÖ·µ»Øuint8_tÀàĞÍµÄµçÆ½
-  * @param   btn_trigger_level : °´¼ü´¥·¢µçÆ½
+  * @brief   æŒ‰é”®åˆ›å»º
+	* @param   name : æŒ‰é”®åç§°
+	* @param   btn : æŒ‰é”®ç»“æ„ä½“
+  * @param   read_btn_level : æŒ‰é”®ç”µå¹³è¯»å–å‡½æ•°ï¼Œéœ€è¦ç”¨æˆ·è‡ªå·±å®ç°è¿”å›uint8_tç±»å‹çš„ç”µå¹³
+  * @param   btn_trigger_level : æŒ‰é”®è§¦å‘ç”µå¹³
   * @return  NULL
   * @author  jiejie
   * @github  https://github.com/jiejieTop
@@ -49,32 +49,32 @@ void Button_Create(const char *name,
     ASSERT(ASSERT_ERR);
   }
   
-  memset(btn, 0, sizeof(struct button));  //Çå³ı½á¹¹ÌåĞÅÏ¢£¬½¨ÒéÓÃ»§ÔÚÖ®Ç°Çå³ı
+  memset(btn, 0, sizeof(struct button));  //æ¸…é™¤ç»“æ„ä½“ä¿¡æ¯ï¼Œå»ºè®®ç”¨æˆ·åœ¨ä¹‹å‰æ¸…é™¤
  
-  StrnCopy(btn->Name, name, BTN_NAME_MAX); /* ´´½¨°´¼üÃû³Æ */
+  StrnCopy(btn->Name, name, BTN_NAME_MAX); /* åˆ›å»ºæŒ‰é”®åç§° */
   
   
-  btn->Button_State = NONE_TRIGGER;           //°´¼ü×´Ì¬
-  btn->Button_Last_State = NONE_TRIGGER;      //°´¼üÉÏÒ»´Î×´Ì¬
-  btn->Button_Trigger_Event = NONE_TRIGGER;   //°´¼ü´¥·¢ÊÂ¼ş
-  btn->Read_Button_Level = read_btn_level;    //°´¼ü¶ÁµçÆ½º¯Êı
-  btn->Button_Trigger_Level = btn_trigger_level;  //°´¼ü´¥·¢µçÆ½
-  btn->Button_Last_Level = btn->Read_Button_Level(); //°´¼üµ±Ç°µçÆ½
+  btn->Button_State = NONE_TRIGGER;           //æŒ‰é”®çŠ¶æ€
+  btn->Button_Last_State = NONE_TRIGGER;      //æŒ‰é”®ä¸Šä¸€æ¬¡çŠ¶æ€
+  btn->Button_Trigger_Event = NONE_TRIGGER;   //æŒ‰é”®è§¦å‘äº‹ä»¶
+  btn->Read_Button_Level = read_btn_level;    //æŒ‰é”®è¯»ç”µå¹³å‡½æ•°
+  btn->Button_Trigger_Level = btn_trigger_level;  //æŒ‰é”®è§¦å‘ç”µå¹³
+  btn->Button_Last_Level = btn->Read_Button_Level(); //æŒ‰é”®å½“å‰ç”µå¹³
   btn->Debounce_Time = 0;
   
   PRINT_DEBUG("button create success!");
   
-  Add_Button(btn);          //´´½¨µÄÊ±ºòÌí¼Óµ½µ¥Á´±íÖĞ
+  Add_Button(btn);          //åˆ›å»ºçš„æ—¶å€™æ·»åŠ åˆ°å•é“¾è¡¨ä¸­
   
-  Print_Btn_Info(btn);     //´òÓ¡ĞÅÏ¢
+  Print_Btn_Info(btn);     //æ‰“å°ä¿¡æ¯
  
 }
 
 /************************************************************
-  * @brief   °´¼ü´¥·¢ÊÂ¼şÓë»Øµ÷º¯ÊıÓ³ÉäÁ´½ÓÆğÀ´
-	* @param   btn : °´¼ü½á¹¹Ìå
-	* @param   btn_event : °´¼ü´¥·¢ÊÂ¼ş
-  * @param   btn_callback : °´¼ü´¥·¢Ö®ºóµÄ»Øµ÷´¦Àíº¯Êı¡£ĞèÒªÓÃ»§ÊµÏÖ
+  * @brief   æŒ‰é”®è§¦å‘äº‹ä»¶ä¸å›è°ƒå‡½æ•°æ˜ å°„é“¾æ¥èµ·æ¥
+	* @param   btn : æŒ‰é”®ç»“æ„ä½“
+	* @param   btn_event : æŒ‰é”®è§¦å‘äº‹ä»¶
+  * @param   btn_callback : æŒ‰é”®è§¦å‘ä¹‹åçš„å›è°ƒå¤„ç†å‡½æ•°ã€‚éœ€è¦ç”¨æˆ·å®ç°
   * @return  NULL
   * @author  jiejie
   * @github  https://github.com/jiejieTop
@@ -86,22 +86,22 @@ void Button_Attach(Button_t *btn,Button_Event btn_event,Button_CallBack btn_call
   if( btn == NULL)
   {
     PRINT_ERR("struct button is null!");
-    //ASSERT(ASSERT_ERR);       //¶ÏÑÔ
+    //ASSERT(ASSERT_ERR);       //æ–­è¨€
   }
   
   if(BUTTON_ALL_RIGGER == btn_event)
   {
     for(uint8_t i = 0 ; i < number_of_event-1 ; i++)
-      btn->CallBack_Function[i] = btn_callback; //°´¼üÊÂ¼ş´¥·¢µÄ»Øµ÷º¯Êı£¬ÓÃÓÚ´¦Àí°´¼üÊÂ¼ş
+      btn->CallBack_Function[i] = btn_callback; //æŒ‰é”®äº‹ä»¶è§¦å‘çš„å›è°ƒå‡½æ•°ï¼Œç”¨äºå¤„ç†æŒ‰é”®äº‹ä»¶
   }
   else
   {
-    btn->CallBack_Function[btn_event] = btn_callback; //°´¼üÊÂ¼ş´¥·¢µÄ»Øµ÷º¯Êı£¬ÓÃÓÚ´¦Àí°´¼üÊÂ¼ş
+    btn->CallBack_Function[btn_event] = btn_callback; //æŒ‰é”®äº‹ä»¶è§¦å‘çš„å›è°ƒå‡½æ•°ï¼Œç”¨äºå¤„ç†æŒ‰é”®äº‹ä»¶
   }
 }
 
 /************************************************************
-  * @brief   É¾³ıÒ»¸öÒÑ¾­´´½¨µÄ°´¼ü
+  * @brief   åˆ é™¤ä¸€ä¸ªå·²ç»åˆ›å»ºçš„æŒ‰é”®
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -128,7 +128,7 @@ void Button_Delete(Button_t *btn)
 }
 
 /************************************************************
-  * @brief   »ñÈ¡°´¼ü´¥·¢µÄÊÂ¼ş
+  * @brief   è·å–æŒ‰é”®è§¦å‘çš„äº‹ä»¶
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -138,7 +138,7 @@ void Button_Delete(Button_t *btn)
   ***********************************************************/
 void Get_Button_EventInfo(Button_t *btn)
 {
-  //°´¼üÊÂ¼ş´¥·¢µÄ»Øµ÷º¯Êı£¬ÓÃÓÚ´¦Àí°´¼üÊÂ¼ş
+  //æŒ‰é”®äº‹ä»¶è§¦å‘çš„å›è°ƒå‡½æ•°ï¼Œç”¨äºå¤„ç†æŒ‰é”®äº‹ä»¶
   for(uint8_t i = 0 ; i < number_of_event-1 ; i++)
   {
     if(btn->CallBack_Function[i] != 0)
@@ -154,7 +154,7 @@ uint8_t Get_Button_Event(Button_t *btn)
 }
 
 /************************************************************
-  * @brief   »ñÈ¡°´¼ü´¥·¢µÄÊÂ¼ş
+  * @brief   è·å–æŒ‰é”®è§¦å‘çš„äº‹ä»¶
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -168,58 +168,58 @@ uint8_t Get_Button_State(Button_t *btn)
 }
 
 /************************************************************
-  * @brief   °´¼üÖÜÆÚ´¦Àíº¯Êı
-  * @param   btn:´¦ÀíµÄ°´¼ü
+  * @brief   æŒ‰é”®å‘¨æœŸå¤„ç†å‡½æ•°
+  * @param   btn:å¤„ç†çš„æŒ‰é”®
   * @return  NULL
   * @author  jiejie
   * @github  https://github.com/jiejieTop
   * @date    2018-xx-xx
   * @version v1.0
-  * @note    ±ØĞëÒÔÒ»¶¨ÖÜÆÚµ÷ÓÃ´Ëº¯Êı£¬½¨ÒéÖÜÆÚÎª20~50ms
+  * @note    å¿…é¡»ä»¥ä¸€å®šå‘¨æœŸè°ƒç”¨æ­¤å‡½æ•°ï¼Œå»ºè®®å‘¨æœŸä¸º20~50ms
   ***********************************************************/
 void Button_Cycle_Process(Button_t *btn)
 {
-  uint8_t current_level = (uint8_t)btn->Read_Button_Level();//»ñÈ¡µ±Ç°°´¼üµçÆ½
+  uint8_t current_level = (uint8_t)btn->Read_Button_Level();//è·å–å½“å‰æŒ‰é”®ç”µå¹³
   
-  if((current_level != btn->Button_Last_Level)&&(++(btn->Debounce_Time) >= BUTTON_DEBOUNCE_TIME)) //°´¼üµçÆ½·¢Éú±ä»¯£¬Ïû¶¶
+  if((current_level != btn->Button_Last_Level)&&(++(btn->Debounce_Time) >= BUTTON_DEBOUNCE_TIME)) //æŒ‰é”®ç”µå¹³å‘ç”Ÿå˜åŒ–ï¼Œæ¶ˆæŠ–
   {
-      btn->Button_Last_Level = current_level; //¸üĞÂµ±Ç°°´¼üµçÆ½
-      btn->Debounce_Time = 0;                 //È·¶¨ÁËÊÇ°´ÏÂ
+      btn->Button_Last_Level = current_level; //æ›´æ–°å½“å‰æŒ‰é”®ç”µå¹³
+      btn->Debounce_Time = 0;                 //ç¡®å®šäº†æ˜¯æŒ‰ä¸‹
       
-      //Èç¹û°´¼üÊÇÃ»±»°´ÏÂµÄ£¬¸Ä±ä°´¼ü×´Ì¬Îª°´ÏÂ(Ê×´Î°´ÏÂ/Ë«»÷°´ÏÂ)
+      //å¦‚æœæŒ‰é”®æ˜¯æ²¡è¢«æŒ‰ä¸‹çš„ï¼Œæ”¹å˜æŒ‰é”®çŠ¶æ€ä¸ºæŒ‰ä¸‹(é¦–æ¬¡æŒ‰ä¸‹/åŒå‡»æŒ‰ä¸‹)
       if((btn->Button_State == NONE_TRIGGER)||(btn->Button_State == BUTTON_DOUBLE))
       {
         btn->Button_State = BUTTON_DOWM;
       }
-      //ÊÍ·Å°´¼ü
+      //é‡Šæ”¾æŒ‰é”®
       else if(btn->Button_State == BUTTON_DOWM)
       {
         btn->Button_State = BUTTON_UP;
-        PRINT_DEBUG("ÊÍ·ÅÁË°´¼ü");
+        PRINT_DEBUG("é‡Šæ”¾äº†æŒ‰é”®");
       }
   }
   
   switch(btn->Button_State)
   {
-    case BUTTON_DOWM :            // °´ÏÂ×´Ì¬
+    case BUTTON_DOWM :            // æŒ‰ä¸‹çŠ¶æ€
     {
-      if(btn->Button_Last_Level == btn->Button_Trigger_Level) //°´¼ü°´ÏÂ
+      if(btn->Button_Last_Level == btn->Button_Trigger_Level) //æŒ‰é”®æŒ‰ä¸‹
       {
-        #if CONTINUOS_TRIGGER     //Ö§³ÖÁ¬Ğø´¥·¢
+        #if CONTINUOS_TRIGGER     //æ”¯æŒè¿ç»­è§¦å‘
 
         if(++(btn->Button_Cycle) >= BUTTON_CONTINUOS_CYCLE)
         {
           btn->Button_Cycle = 0;
           btn->Button_Trigger_Event = BUTTON_CONTINUOS; 
-          TRIGGER_CB(BUTTON_CONTINUOS);    //Á¬°´
-          PRINT_DEBUG("Á¬°´");
+          TRIGGER_CB(BUTTON_CONTINUOS);    //è¿æŒ‰
+          PRINT_DEBUG("è¿æŒ‰");
         }
         
         #else
-        
-        btn->Button_Trigger_Event = BUTTON_DOWM;
+        if(btn->Button_Trigger_Event != BUTTON_LONG)
+          btn->Button_Trigger_Event = BUTTON_DOWM;
       
-        if(++(btn->Long_Time) >= BUTTON_LONG_TIME)  //ÊÍ·Å°´¼üÇ°¸üĞÂ´¥·¢ÊÂ¼şÎª³¤°´
+        if(++(btn->Long_Time) >= BUTTON_LONG_TIME)  //é‡Šæ”¾æŒ‰é”®å‰æ›´æ–°è§¦å‘äº‹ä»¶ä¸ºé•¿æŒ‰
         {
           #if LONG_FREE_TRIGGER
           
@@ -227,19 +227,19 @@ void Button_Cycle_Process(Button_t *btn)
           
           #else
           
-          if(++(btn->Button_Cycle) >= BUTTON_LONG_CYCLE)    //Á¬Ğø´¥·¢³¤°´µÄÖÜÆÚ
+          if(++(btn->Button_Cycle) >= BUTTON_LONG_CYCLE)    //è¿ç»­è§¦å‘é•¿æŒ‰çš„å‘¨æœŸ
           {
             btn->Button_Cycle = 0;
             btn->Button_Trigger_Event = BUTTON_LONG; 
-            TRIGGER_CB(BUTTON_LONG);    //³¤°´
+            TRIGGER_CB(BUTTON_LONG);    //é•¿æŒ‰
           }
           #endif
           
-          if(btn->Long_Time == 0xFF)  //¸üĞÂÊ±¼äÒç³ö
+          if(btn->Long_Time == 0xFF)  //æ›´æ–°æ—¶é—´æº¢å‡º
           {
             btn->Long_Time = BUTTON_LONG_TIME;
           }
-          PRINT_DEBUG("³¤°´");
+          PRINT_DEBUG("é•¿æŒ‰");
         }
           
         #endif
@@ -248,25 +248,25 @@ void Button_Cycle_Process(Button_t *btn)
       break;
     } 
     
-    case BUTTON_UP :        // µ¯Æğ×´Ì¬
+    case BUTTON_UP :        // å¼¹èµ·çŠ¶æ€
     {
-      if(btn->Button_Trigger_Event == BUTTON_DOWM)  //´¥·¢µ¥»÷
+      if(btn->Button_Trigger_Event == BUTTON_DOWM)  //è§¦å‘å•å‡»
       {
-        if((btn->Timer_Count <= BUTTON_DOUBLE_TIME)&&(btn->Button_Last_State == BUTTON_DOUBLE)) // Ë«»÷
+        if((btn->Timer_Count <= BUTTON_DOUBLE_TIME)&&(btn->Button_Last_State == BUTTON_DOUBLE)) // åŒå‡»
         {
           btn->Button_Trigger_Event = BUTTON_DOUBLE;
           TRIGGER_CB(BUTTON_DOUBLE);    
-          PRINT_DEBUG("Ë«»÷");
+          PRINT_DEBUG("åŒå‡»");
           btn->Button_State = NONE_TRIGGER;
           btn->Button_Last_State = NONE_TRIGGER;
         }
         else
         {
             btn->Timer_Count=0;
-            btn->Long_Time = 0;   //¼ì²â³¤°´Ê§°Ü£¬Çå0
+            btn->Long_Time = 0;   //æ£€æµ‹é•¿æŒ‰å¤±è´¥ï¼Œæ¸…0
           
           #if (SINGLE_AND_DOUBLE_TRIGGER == 0)
-            TRIGGER_CB(BUTTON_DOWM);    //µ¥»÷
+            TRIGGER_CB(BUTTON_DOWM);    //å•å‡»
           #endif
             btn->Button_State = BUTTON_DOUBLE;
             btn->Button_Last_State = BUTTON_DOUBLE;
@@ -277,20 +277,21 @@ void Button_Cycle_Process(Button_t *btn)
       else if(btn->Button_Trigger_Event == BUTTON_LONG)
       {
         #if LONG_FREE_TRIGGER
-          TRIGGER_CB(BUTTON_LONG);    //³¤°´
+          TRIGGER_CB(BUTTON_LONG);    //é•¿æŒ‰
         #else
-          TRIGGER_CB(BUTTON_LONG_FREE);    //³¤°´ÊÍ·Å
+          TRIGGER_CB(BUTTON_LONG_FREE);    //é•¿æŒ‰é‡Šæ”¾
         #endif
         btn->Long_Time = 0;
         btn->Button_State = NONE_TRIGGER;
         btn->Button_Last_State = BUTTON_LONG;
+	btn->Button_Trigger_Event = BUTTON_DOWM;
       } 
       
       #if CONTINUOS_TRIGGER
-        else if(btn->Button_Trigger_Event == BUTTON_CONTINUOS)  //Á¬°´
+        else if(btn->Button_Trigger_Event == BUTTON_CONTINUOS)  //è¿æŒ‰
         {
           btn->Long_Time = 0;
-          TRIGGER_CB(BUTTON_CONTINUOS_FREE);    //Á¬·¢ÊÍ·Å
+          TRIGGER_CB(BUTTON_CONTINUOS_FREE);    //è¿å‘é‡Šæ”¾
           btn->Button_State = NONE_TRIGGER;
           btn->Button_Last_State = BUTTON_CONTINUOS;
         } 
@@ -301,7 +302,7 @@ void Button_Cycle_Process(Button_t *btn)
     
     case BUTTON_DOUBLE :
     {
-      btn->Timer_Count++;     //Ê±¼ä¼ÇÂ¼ 
+      btn->Timer_Count++;     //æ—¶é—´è®°å½• 
       if(btn->Timer_Count>=BUTTON_DOUBLE_TIME)
       {
         btn->Button_State = NONE_TRIGGER;
@@ -312,7 +313,7 @@ void Button_Cycle_Process(Button_t *btn)
         if((btn->Timer_Count>=BUTTON_DOUBLE_TIME)&&(btn->Button_Last_State != BUTTON_DOWM))
         {
           btn->Timer_Count=0;
-          TRIGGER_CB(BUTTON_DOWM);    //µ¥»÷
+          TRIGGER_CB(BUTTON_DOWM);    //å•å‡»
           btn->Button_State = NONE_TRIGGER;
           btn->Button_Last_State = BUTTON_DOWM;
         }
@@ -329,14 +330,14 @@ void Button_Cycle_Process(Button_t *btn)
 }
 
 /************************************************************
-  * @brief   ±éÀúµÄ·½Ê½É¨Ãè°´¼ü£¬²»»á¶ªÊ§Ã¿¸ö°´¼ü
+  * @brief   éå†çš„æ–¹å¼æ‰«ææŒ‰é”®ï¼Œä¸ä¼šä¸¢å¤±æ¯ä¸ªæŒ‰é”®
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
   * @github  https://github.com/jiejieTop
   * @date    2018-xx-xx
   * @version v1.0
-  * @note    ´Ëº¯ÊıÒªÖÜÆÚµ÷ÓÃ£¬½¨Òé20-50msµ÷ÓÃÒ»´Î
+  * @note    æ­¤å‡½æ•°è¦å‘¨æœŸè°ƒç”¨ï¼Œå»ºè®®20-50msè°ƒç”¨ä¸€æ¬¡
   ***********************************************************/
 void Button_Process(void)
 {
@@ -348,7 +349,7 @@ void Button_Process(void)
 }
 
 /************************************************************
-  * @brief   ±éÀú°´¼ü
+  * @brief   éå†æŒ‰é”®
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -367,14 +368,14 @@ void Search_Button(void)
 }
 
 /************************************************************
-  * @brief   ´¦ÀíËùÓĞ°´¼ü»Øµ÷º¯Êı
+  * @brief   å¤„ç†æ‰€æœ‰æŒ‰é”®å›è°ƒå‡½æ•°
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
   * @github  https://github.com/jiejieTop
   * @date    2018-xx-xx
   * @version v1.0
-  * @note    Ôİ²»ÊµÏÖ
+  * @note    æš‚ä¸å®ç°
   ***********************************************************/
 void Button_Process_CallBack(void *btn)
 {
@@ -384,43 +385,43 @@ void Button_Process_CallBack(void *btn)
   {
     case BUTTON_DOWM:
     {
-      PRINT_INFO("Ìí¼ÓÄãµÄ°´ÏÂ´¥·¢µÄ´¦ÀíÂß¼­");
+      PRINT_INFO("æ·»åŠ ä½ çš„æŒ‰ä¸‹è§¦å‘çš„å¤„ç†é€»è¾‘");
       break;
     }
     
     case BUTTON_UP:
     {
-      PRINT_INFO("Ìí¼ÓÄãµÄÊÍ·Å´¥·¢µÄ´¦ÀíÂß¼­");
+      PRINT_INFO("æ·»åŠ ä½ çš„é‡Šæ”¾è§¦å‘çš„å¤„ç†é€»è¾‘");
       break;
     }
     
     case BUTTON_DOUBLE:
     {
-      PRINT_INFO("Ìí¼ÓÄãµÄË«»÷´¥·¢µÄ´¦ÀíÂß¼­");
+      PRINT_INFO("æ·»åŠ ä½ çš„åŒå‡»è§¦å‘çš„å¤„ç†é€»è¾‘");
       break;
     }
     
     case BUTTON_LONG:
     {
-      PRINT_INFO("Ìí¼ÓÄãµÄ³¤°´´¥·¢µÄ´¦ÀíÂß¼­");
+      PRINT_INFO("æ·»åŠ ä½ çš„é•¿æŒ‰è§¦å‘çš„å¤„ç†é€»è¾‘");
       break;
     }
     
     case BUTTON_LONG_FREE:
     {
-      PRINT_INFO("Ìí¼ÓÄãµÄ³¤°´ÊÍ·Å´¥·¢µÄ´¦ÀíÂß¼­");
+      PRINT_INFO("æ·»åŠ ä½ çš„é•¿æŒ‰é‡Šæ”¾è§¦å‘çš„å¤„ç†é€»è¾‘");
       break;
     }
     
     case BUTTON_CONTINUOS:
     {
-      PRINT_INFO("Ìí¼ÓÄãµÄÁ¬Ğø´¥·¢µÄ´¦ÀíÂß¼­");
+      PRINT_INFO("æ·»åŠ ä½ çš„è¿ç»­è§¦å‘çš„å¤„ç†é€»è¾‘");
       break;
     }
     
     case BUTTON_CONTINUOS_FREE:
     {
-      PRINT_INFO("Ìí¼ÓÄãµÄÁ¬Ğø´¥·¢ÊÍ·ÅµÄ´¦ÀíÂß¼­");
+      PRINT_INFO("æ·»åŠ ä½ çš„è¿ç»­è§¦å‘é‡Šæ”¾çš„å¤„ç†é€»è¾‘");
       break;
     }
       
@@ -428,10 +429,10 @@ void Button_Process_CallBack(void *btn)
 }
 
 
-/**************************** ÒÔÏÂÊÇÄÚ²¿µ÷ÓÃº¯Êı ********************/
+/**************************** ä»¥ä¸‹æ˜¯å†…éƒ¨è°ƒç”¨å‡½æ•° ********************/
 
 /************************************************************
-  * @brief   ¿½±´Ö¸¶¨³¤¶È×Ö·û´®
+  * @brief   æ‹·è´æŒ‡å®šé•¿åº¦å­—ç¬¦ä¸²
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -460,7 +461,7 @@ static char *StrnCopy(char *dst, const char *src, uint32_t n)
 }
 
 /************************************************************
-  * @brief   ´òÓ¡°´¼üÏà¹ØĞÅÏ¢
+  * @brief   æ‰“å°æŒ‰é”®ç›¸å…³ä¿¡æ¯
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
@@ -487,7 +488,7 @@ static void Print_Btn_Info(Button_t* btn)
   Search_Button();
 }
 /************************************************************
-  * @brief   Ê¹ÓÃµ¥Á´±í½«°´¼üÁ¬½ÓÆğÀ´
+  * @brief   ä½¿ç”¨å•é“¾è¡¨å°†æŒ‰é”®è¿æ¥èµ·æ¥
 	* @param   NULL
   * @return  NULL
   * @author  jiejie
