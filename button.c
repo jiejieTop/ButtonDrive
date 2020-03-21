@@ -195,6 +195,7 @@ void Button_Cycle_Process(Button_t *btn)
       else if(btn->Button_State == BUTTON_DOWM)
       {
         btn->Button_State = BUTTON_UP;
+        TRIGGER_CB(BUTTON_UP);    // 触发释放
         PRINT_DEBUG("释放了按键");
       }
   }
@@ -498,13 +499,6 @@ static void Print_Btn_Info(Button_t* btn)
   ***********************************************************/
 static void Add_Button(Button_t* btn)
 {
-  struct button *pass_btn = Head_Button;
-  
-  while(pass_btn)
-  {
-    pass_btn = pass_btn->Next;
-  }
-  
   btn->Next = Head_Button;
   Head_Button = btn;
 }
