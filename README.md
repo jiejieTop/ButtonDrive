@@ -34,12 +34,12 @@ Button_drive是一个小巧的按键驱动，支持单击、双击、长按、�
 
 ## 使用方法
 1. 创建按键句柄
-```
+```c
 Button_t Button1;
 Button_t Button2; 
 ```
 2. 创建按键，初始化按键信息，包括按键名字、按键电平检测函数接口、按键触发电平。
-```
+```c
   Button_Create("Button1",				//按键名字
                 &Button1, 				//按键句柄
                 Read_Button1_Level, 	//按键电平检测函数接口
@@ -48,7 +48,7 @@ Button_t Button2;
                 ......
 ```
 3. 按键触发事件与事件回调函数链接映射，当按键事件被触发的时候，自动跳转回调函数中处理业务逻辑。
-```
+```c
   Button_Attach(&Button1,BUTTON_DOWM,Btn2_Dowm_CallBack);		//按键单击
   Button_Attach(&Button1,BUTTON_DOUBLE,Btn2_Double_CallBack);	//双击
   Button_Attach(&Button1,BUTTON_LONG,Btn2_Long_CallBack);		//长按
@@ -56,7 +56,7 @@ Button_t Button2;
 				.......
 ```
 4. 周期调用回调按键处理函数即可，建议调用周期20-50ms。
-```
+```c
 Button_Process();     //需要周期调用按键处理函数
 ```
 
@@ -64,7 +64,7 @@ Button_Process();     //需要周期调用按键处理函数
 需要用户实现的 **2** 个函数：
 
 - 按键电平检测接口：
-```
+```c
 uint8_t Read_Button1_Level(void)
 {
   return GPIO_ReadInputDataBit(BTN1_GPIO_PORT,BTN1_GPIO_PIN);
@@ -80,7 +80,7 @@ uint8_t Read_Button2_Level(void)
 ```
 
 - 按键逻辑处理
-```
+```c
 void Btn1_Dowm_CallBack(void *btn)
 {
   PRINT_INFO("Button1 单击!");
@@ -106,7 +106,7 @@ Button_drive开放源码，按键控制块采用数据结构方式，按键事�
 同时所有被创建的按键采用单链表方式连击，用户只管创建，无需理会按键处理，只需调用`Button_Process()`即可，在函数中会自动遍历所有被创建的按键。
 支持按键删除操作，用户无需在代码中删除对应的按键创建于映射链接代码，也无需删除关于按键的任何回调事件处理函数，只需调用`Button_Delete()`函数即可，这样子，就不会处理关于被删除按键的任何状态。当然目前按键内存不会释放，如果使用os的话，建议释放按键内存。
 ##### 按键控制块
-```
+```c
 /*
 	每个按键对应1个全局的结构体变量。
 	其成员变量是实现消抖和多种按键状态所必须的
@@ -139,7 +139,7 @@ typedef struct button
 
 ```
 #####  触发事件
-```
+```c
 typedef enum {
   BUTTON_DOWM = 0,
   BUTTON_UP,
@@ -154,7 +154,7 @@ typedef enum {
 
 ```
 #####  宏定义选择
-```
+```c
 #define BTN_NAME_MAX  32     //名字最大为32字节
 
 /* 按键消抖时间40ms, 建议调用周期为20ms
@@ -185,7 +185,7 @@ typedef enum {
 ```
 
 ##### 例子
-```
+```c
   Button_Create("Button1",
               &Button1, 
               Read_KEY1_Level, 
